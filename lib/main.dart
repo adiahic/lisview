@@ -6,8 +6,12 @@ import 'package:http/http.dart' as http;
 import 'package:lisview/coctail_page.dart';
 
 var kboja = Colors.yellow;
-List<String> kokteli = [];
-List<String> slike = [];
+List<String> kokteli = [
+  '',
+];
+List<String> slike = [
+  '',
+];
 
 void main() => runApp(new MyApp());
 
@@ -136,16 +140,14 @@ class Network {
 
 Future<dynamic> vratiKoktel(text) async {
   var praviKoktel = await Network(text).koktel();
-  var duzina = praviKoktel['drinks'].toString().length;
+  var duzina = praviKoktel['drinks'].toString().length - 2;
   int i;
   var pkoktel;
 
-  for (i = 0; i < duzina; i++) {
+  for (i = 0; i < 3; i++) {
     pkoktel = praviKoktel['drinks'][i]['strDrink'];
-    print(pkoktel);
+
     kokteli.add(pkoktel);
-    print(pkoktel);
-    print(kokteli);
   }
   return pkoktel;
 }
@@ -154,14 +156,12 @@ Future<dynamic> slikaKoktel(text) async {
   var praviKoktel = await Network(text).koktel();
   int i;
   var pkoktel;
-  var duzina = praviKoktel['drinks'].toString().length;
+  var duzina = praviKoktel['drinks'].toString().length - 2;
 
-  for (i = 0; i < duzina; i++) {
+  for (i = 0; i < 3; i++) {
     pkoktel = praviKoktel['drinks'][i]['strDrinkThumb'];
-    print(pkoktel);
+
     slike.add(pkoktel);
-    print(pkoktel);
-    print(kokteli);
   }
   return pkoktel;
 }
