@@ -6,12 +6,14 @@ import 'package:http/http.dart' as http;
 import 'package:lisview/coctail_page.dart';
 
 var kboja = Colors.yellow;
+
 List<String> kokteli = [
   '',
 ];
 List<String> slike = [
   '',
 ];
+var upute;
 
 void main() => runApp(new MyApp());
 
@@ -52,18 +54,13 @@ class DyanmicList extends State<ListDisplay> {
                   textAlign: TextAlign.center,
                   controller: eCtrl,
                   onSubmitted: (text) {
-                    print(kokteli);
                     setState(
                       () {
                         vratiKoktel(text).then((onValue) {
-                          setState(() {
-                            //             kokteli.add(onValue);
-                          });
+                          setState(() {});
                         });
                         slikaKoktel(text).then((onValue) {
-                          setState(() {
-                            //           slike.add(onValue);
-                          });
+                          setState(() {});
                         });
 
                         eCtrl.clear();
@@ -85,13 +82,13 @@ class DyanmicList extends State<ListDisplay> {
                                   hoverColor: Colors.cyanAccent,
                                   onPressed: () {
                                     Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => CoctailPage(
-                                                kokteli, Index, slike)));
-                                    setState(() {
-                                      print(Index);
-                                    });
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            CoctailPage(kokteli, Index, slike),
+                                      ),
+                                    );
+                                    setState(() {});
                                   },
                                   child: Row(
                                     children: <Widget>[
@@ -133,6 +130,7 @@ class Network {
   Future<dynamic> koktel() async {
     var url =
         'https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=$sastojak';
+
     http.Response response = await http.get(url);
     String data = response.body;
 
@@ -142,7 +140,7 @@ class Network {
       var coct = jsonDecode(data);
       var coct1 = jsonDecode(data)['drinks'][0]['strDrink'];
 
-      print(coct1);
+      //    print(coct1);
 
       return coct;
     } else {
@@ -179,4 +177,28 @@ Future<dynamic> slikaKoktel(text) async {
     slike.add(pkoktel);
   }
   return pkoktel;
+}
+
+class Network2 {
+  Network2(this.sastojak);
+  var body;
+  final String sastojak;
+
+  Future<dynamic> koktel() async {
+    var url =
+        'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=$sastojak';
+
+    http.Response response = await http.get(url);
+    String data = response.body;
+
+    if (response.statusCode == 200) {
+      String data = response.body;
+
+      var coct1 = await jsonDecode(data)['drinks'][0]['strInstructions'];
+
+      return coct1;
+    } else {
+      print(response.statusCode);
+    }
+  }
 }
