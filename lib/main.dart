@@ -52,7 +52,7 @@ class DyanmicList extends State<ListDisplay> {
                         });
                         slikaKoktel(text).then((onValue) {
                           setState(() {
-                            slike.add(onValue);
+                            //           slike.add(onValue);
                           });
                         });
 
@@ -85,12 +85,14 @@ class DyanmicList extends State<ListDisplay> {
                                   },
                                   child: Row(
                                     children: <Widget>[
-                                      new Text(
-                                        kokteli[Index],
-                                        softWrap: true,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 25.0,
+                                      Expanded(
+                                        child: new Text(
+                                          kokteli[Index],
+                                          softWrap: true,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 25.0,
+                                          ),
                                         ),
                                       ),
                                     ],
