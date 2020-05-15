@@ -1,9 +1,13 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:lisview/coctail_page.dart';
 
-List<dynamic> zemlje = ['Bosna', 'Austrija', 'USA', 'Kuba', 'Malezija'];
+var kboja = Colors.yellow;
+List<String> kokteli = [];
+List<String> slike = [];
 
 void main() => runApp(new MyApp());
 
@@ -22,31 +26,36 @@ class ListDisplay extends StatefulWidget {
 }
 
 class DyanmicList extends State<ListDisplay> {
-  List<String> zemlje = [];
   final TextEditingController eCtrl = new TextEditingController();
   @override
   Widget build(BuildContext ctxt) {
     return new Scaffold(
         appBar: new AppBar(
-          title: new Text("Dynamic Demo"),
+          title: new Text("Koktel demo po sastojku"),
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: new Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               new TextField(
+                  textAlign: TextAlign.center,
                   controller: eCtrl,
                   onSubmitted: (text) {
+                    print(kokteli);
                     setState(
                       () {
-                        Network(text).koktel().then((onValue) {
+                        vratiKoktel(text).then((onValue) {
                           setState(() {
-                            zemlje.add(onValue);
+                            //             kokteli.add(onValue);
                           });
-                          //
                         });
-//then((val) => setState(() {
-                        //  zemlje.add(text);
+                        slikaKoktel(text).then((onValue) {
+                          setState(() {
+                            slike.add(onValue);
+                          });
+                        });
+
                         eCtrl.clear();
                         setState(() {});
                       },
@@ -57,11 +66,36 @@ class DyanmicList extends State<ListDisplay> {
                       stream: null,
                       builder: (context, snapshot) {
                         return ListView.builder(
-                            itemCount: zemlje.length,
+                            itemCount: kokteli.length,
                             itemBuilder: (BuildContext ctxt, int Index) {
-                              return new Text(
-                                zemlje[Index],
-                                style: TextStyle(fontSize: 25.0),
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: FlatButton(
+                                  focusColor: Colors.blue,
+                                  hoverColor: Colors.cyanAccent,
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => CoctailPage(
+                                                kokteli, Index, slike)));
+                                    setState(() {
+                                      print(Index);
+                                    });
+                                  },
+                                  child: Row(
+                                    children: <Widget>[
+                                      new Text(
+                                        kokteli[Index],
+                                        softWrap: true,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 25.0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               );
                             });
                       }))
@@ -84,9 +118,11 @@ class Network {
     if (response.statusCode == 200) {
       String data = response.body;
 
-      var coct = jsonDecode(data)['drinks'][0]['strDrink'];
-      // zemlje.add(coct);
-      print(coct);
+      var coct = jsonDecode(data);
+      var coct1 = jsonDecode(data)['drinks'][0]['strDrink'];
+
+      print(coct1);
+
       return coct;
     } else {
       print(response.statusCode);
@@ -94,4 +130,36 @@ class Network {
   }
 
   Network(this.sastojak);
+}
+
+Future<dynamic> vratiKoktel(text) async {
+  var praviKoktel = await Network(text).koktel();
+  var duzina = praviKoktel['drinks'].toString().length;
+  int i;
+  var pkoktel;
+
+  for (i = 0; i < duzina; i++) {
+    pkoktel = praviKoktel['drinks'][i]['strDrink'];
+    print(pkoktel);
+    kokteli.add(pkoktel);
+    print(pkoktel);
+    print(kokteli);
+  }
+  return pkoktel;
+}
+
+Future<dynamic> slikaKoktel(text) async {
+  var praviKoktel = await Network(text).koktel();
+  int i;
+  var pkoktel;
+  var duzina = praviKoktel['drinks'].toString().length;
+
+  for (i = 0; i < duzina; i++) {
+    pkoktel = praviKoktel['drinks'][i]['strDrinkThumb'];
+    print(pkoktel);
+    slike.add(pkoktel);
+    print(pkoktel);
+    print(kokteli);
+  }
+  return pkoktel;
 }
