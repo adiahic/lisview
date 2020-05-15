@@ -34,6 +34,11 @@ class DyanmicList extends State<ListDisplay> {
   @override
   Widget build(BuildContext ctxt) {
     return new Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: _incrementCounter,
+          tooltip: 'Obriši',
+          child: Icon(Icons.cancel),
+        ),
         appBar: new AppBar(
           title: new Text("Koktel demo po sastojku"),
         ),
@@ -109,6 +114,15 @@ class DyanmicList extends State<ListDisplay> {
           ),
         ));
   }
+
+  void _incrementCounter() {
+    setState(() {
+      kokteli.clear();
+      kokteli = [''];
+      slike.clear();
+      slike = [''];
+    });
+  }
 }
 
 class Network {
@@ -140,11 +154,11 @@ class Network {
 
 Future<dynamic> vratiKoktel(text) async {
   var praviKoktel = await Network(text).koktel();
-  var duzina = praviKoktel['drinks'].toString().length - 2;
+  var duzina = praviKoktel['drinks'].length - 1;
   int i;
   var pkoktel;
 
-  for (i = 0; i < 3; i++) {
+  for (i = 0; i < duzina; i++) {
     pkoktel = praviKoktel['drinks'][i]['strDrink'];
 
     kokteli.add(pkoktel);
@@ -156,9 +170,9 @@ Future<dynamic> slikaKoktel(text) async {
   var praviKoktel = await Network(text).koktel();
   int i;
   var pkoktel;
-  var duzina = praviKoktel['drinks'].toString().length - 2;
+  var duzina = praviKoktel['drinks'].length - 1;
 
-  for (i = 0; i < 3; i++) {
+  for (i = 0; i < duzina; i++) {
     pkoktel = praviKoktel['drinks'][i]['strDrinkThumb'];
 
     slike.add(pkoktel);
